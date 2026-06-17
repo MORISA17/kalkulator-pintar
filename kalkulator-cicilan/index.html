@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Cicilan Kredit Kendaraan Online - KalkulatorPintar</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .calc-container {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+        .row-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .btn-calc {
+            width: 100%;
+            background: #3182ce;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn-calc:hover {
+            background: #2b6cb0;
+        }
+        /* Desain Box Hasil */
+        .result-box {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px dashed #e2e8f0;
+            display: none;
+        }
+        .installment-highlight {
+            background: #f0fff4;
+            color: #38a169;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #c6f6d5;
+            margin-bottom: 20px;
+        }
+        .installment-highlight span {
+            display: block;
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .installment-highlight strong {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .result-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+        .result-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #4a5568;
+            text-decoration: none;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: #3182ce;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="../index.html" class="back-link">⬅️ Kembali ke Semua Kalkulator</a>
+
+        <div class="calc-container">
+            <header style="margin-bottom: 30px; text-align: left;">
+                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Kalkulator Cicilan Kendaraan</h1>
+                <p style="font-size: 0.95rem;">Simulasi perhitungan angsuran kredit bulanan dengan bunga flat secara instan.</p>
+            </header>
+
+            <div class="form-group">
+                <label for="hargaKendaraan">Harga Kendaraan (Rp)</label>
+                <input type="number" id="hargaKendaraan" class="form-control" placeholder="Contoh: 250000000">
+            </div>
+
+            <div class="row-group">
+                <div class="form-group">
+                    <label for="uangMuka">Uang Muka / DP (Rp)</label>
+                    <input type="number" id="uangMuka" class="form-control" placeholder="Contoh: 50000000">
+                </div>
+                <div class="form-group">
+                    <label for="bungaPertahun">Bunga Pertahun (%)</label>
+                    <input type="number" id="bungaPertahun" class="form-control" placeholder="Contoh: 5" step="0.1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tenor">Jangka Waktu (Tenor)</label>
+                <select id="tenor" class="form-control">
+                    <option value="12">12 Bulan (1 Tahun)</option>
+                    <option value="24">24 Bulan (2 Tahun)</option>
+                    <option value="36">36 Bulan (3 Tahun)</option>
+                    <option value="48">48 Bulan (4 Tahun)</option>
+                    <option value="60">60 Bulan (5 Tahun)</option>
+                </select>
+            </div>
+
+            <button onclick="hitungCicilan()" class="btn-calc">Simulasi Cicilan</button>
+
+            <div id="hasilBox" class="result-box">
+                <div class="installment-highlight">
+                    <span>Estimasi Angsuran / Bulan:</span>
+                    <strong id="cicilanPerbulan">Rp 0</strong>
+                </div>
+                
+                <table class="result-table">
+                    <tr>
+                        <td>Total Pinjaman Pokok (Plafond)</td>
+                        <td id="resPinjaman">Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Bunga Selama Tenor</td>
+                        <td id="resTotalBunga">Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Pengembalian (Pokok + Bunga)</td>
+                        <td id="resTotalBayar">Rp 0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 KalkulatorPintar. Semua Hak Dilindungi.</p>
+        </footer>
+    </div>
+
+    <script>
+        function hitungCicilan() {
+            const harga = parseFloat(document.getElementById('hargaKendaraan').value);
+            const dp = parseFloat(document.getElementById('uangMuka').value) || 0;
+            const bungaTahunan = parseFloat(document.getElementById('bungaPertahun').value);
+            const tenorBulan = parseInt(document.getElementById('tenor').value);
+
+            // Validasi input wajib
+            if (isNaN(harga) || harga <= 0 || isNaN(bungaTahunan) || bungaTahunan < 0) {
+                alert("Silakan masukkan nominal harga dan persentase bunga yang valid!");
+                return;
+            }
+
+            if (dp >= harga) {
+                alert("Uang muka (DP) tidak boleh sama dengan atau melebihi harga kendaraan!");
+                return;
+            }
+
+            // 1. Hitung Pokok Utang (Plafond)
+            const pokokPinjaman = harga - dp;
+
+            // 2. Hitung Total Bunga (Rumus Bunga Flat)
+            const tenorTahun = tenorBulan / 12;
+            const totalBunga = pokokPinjaman * (bungaTahunan / 100) * tenorTahun;
+
+            // 3. Hitung Total Kewajiban & Cicilan Bulanan
+            const totalBayar = pokokPinjaman + totalBunga;
+            const cicilanBulanan = totalBayar / tenorBulan;
+
+            // Render ke HTML dengan format Rupiah
+            document.getElementById('cicilanPerbulan').innerText = "Rp " + Math.round(cicilanBulanan).toLocaleString('id-ID');
+            document.getElementById('resPinjaman').innerText = "Rp " + Math.round(pokokPinjaman).toLocaleString('id-ID');
+            document.getElementById('resTotalBunga').innerText = "Rp " + Math.round(totalBunga).toLocaleString('id-ID');
+            document.getElementById('resTotalBayar').innerText = "Rp " + Math.round(totalBayar).toLocaleString('id-ID');
+
+            // Tampilkan box hasil
+            document.getElementById('hasilBox').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator PPN Indonesia 12% Terbaru - KalkulatorPintar</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Gaya Khusus untuk Komponen Form Kalkulator */
+        .calc-container {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+        .btn-calc {
+            width: 100%;
+            background: #3182ce;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn-calc:hover {
+            background: #2b6cb0;
+        }
+        /* Desain Tabel Hasil */
+        .result-box {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px dashed #e2e8f0;
+            display: none;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .result-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .result-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+        }
+        .total-row {
+            font-size: 1.2rem;
+            color: #2b6cb0;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #4a5568;
+            text-decoration: none;
+            margin-bottom: 25px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: #3182ce;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="../index.html" class="back-link">⬅️ Kembali ke Semua Kalkulator</a>
+
+        <div class="calc-container">
+            <header style="margin-bottom: 30px; text-align: left;">
+                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Kalkulator PPN Indonesia</h1>
+                <p style="font-size: 0.95rem;">Hitung cepat nilai Pajak Pertambahan Nilai (PPN) dengan tarif terbaru 12%.</p>
+            </header>
+
+            <div class="form-group">
+                <label for="hargaInput">Nominal Uang / Harga Barang (Rp)</label>
+                <input type="number" id="hargaInput" class="form-control" placeholder="Contoh: 1000000" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="jenisPPN">Jenis Perhitungan</label>
+                <select id="jenisPPN" class="form-control">
+                    <option value="belum">Harga Belum Termasuk PPN (Pertambahan)</option>
+                    <option value="sudah">Harga Sudah Termasuk PPN (Pengurangan/Koreksi)</option>
+                </select>
+            </div>
+
+            <button onclick="hitungPPN()" class="btn-calc">Hitung Nilai Pajak</button>
+
+            <div id="hasilBox" class="result-box">
+                <h3 style="color: #2d3748; font-size: 1.1rem;">Rincian Hasil Perhitungan:</h3>
+                <table class="result-table">
+                    <tr>
+                        <td>Dasar Pengenaan Pajak (DPP)</td>
+                        <td id="resDPP">Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td>Nilai PPN (12%)</td>
+                        <td id="resPPN" style="color: #e53e3e;">Rp 0</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total Akhir</strong></td>
+                        <td id="resTotal"><strong>Rp 0</strong></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 KalkulatorPintar. Semua Hak Dilindungi.</p>
+        </footer>
+    </div>
+
+    <script>
+        function hitungPPN() {
+            const inputVal = parseFloat(document.getElementById('hargaInput').value);
+            const jenis = document.getElementById('jenisPPN').value;
+            const tarif = 0.12; // Tarif PPN 12%
+
+            if (isNaN(inputVal) || inputVal <= 0) {
+                alert("Masukkan nominal harga yang valid dan lebih dari 0!");
+                return;
+            }
+
+            let dpp = 0;
+            let ppn = 0;
+            let total = 0;
+
+            if (jenis === 'belum') {
+                // Jika harga dasar belum termasuk PPN
+                dpp = inputVal;
+                ppn = dpp * tarif;
+                total = dpp + ppn;
+            } else {
+                // Jika harga tertera sudah termasuk PPN (Mencari harga dasar asal)
+                dpp = inputVal / (1 + tarif);
+                ppn = inputVal - dpp;
+                total = inputVal;
+            }
+
+            // Format angka ke format Rupiah (id-ID)
+            document.getElementById('resDPP').innerText = "Rp " + Math.round(dpp).toLocaleString('id-ID');
+            document.getElementById('resPPN').innerText = "Rp " + Math.round(ppn).toLocaleString('id-ID');
+            document.getElementById('resTotal').innerText = "Rp " + Math.round(total).toLocaleString('id-ID');
+
+            // Tampilkan kotak hasil dengan efek halus
+            document.getElementById('hasilBox').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

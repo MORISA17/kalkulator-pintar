@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Konversi Satuan Lengkap Online - KalkulatorPintar</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .calc-container {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .btn-calc {
+            width: 100%;
+            background: #3182ce;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn-calc:hover {
+            background: #2b6cb0;
+        }
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2b6cb0;
+            display: none;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #4a5568;
+            text-decoration: none;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: #3182ce;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="../index.html" class="back-link">⬅️ Kembali ke Semua Kalkulator</a>
+
+        <div class="calc-container">
+            <header style="margin-bottom: 30px; text-align: left;">
+                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Konversi Satuan</h1>
+                <p style="font-size: 0.95rem;">Ubah berbagai macam jenis satuan nilai ukuran secara instan dan akurat.</p>
+            </header>
+
+            <div class="form-group">
+                <label for="kategori">Kategori Satuan</label>
+                <select id="kategori" class="form-control" onchange="updateOpsiSatuan()">
+                    <option value="panjang">📏 Panjang (Meter, KM, CM, dll)</option>
+                    <option value="berat">⚖️ Berat (Kg, Gram, Pon, Ons)</option>
+                    <option value="suhu">🌡️ Suhu (Celsius, Fahrenheit, Kelvin)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nilaiInput">Masukkan Nilai Angka</label>
+                <input type="number" id="nilaiInput" class="form-control" placeholder="Contoh: 100" value="1">
+            </div>
+
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label for="satuanDari">Dari</label>
+                    <select id="satuanDari" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label for="satuanKe">Ke</label>
+                    <select id="satuanKe" class="form-control"></select>
+                </div>
+            </div>
+
+            <button onclick="prosesKonversi()" class="btn-calc">Konversi Sekarang</button>
+
+            <div id="hasilBox" class="result-box">
+                <span id="teksHasil">1 Meter = 100 Centimeter</span>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 KalkulatorPintar. Semua Hak Dilindungi.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data opsi pilihan satuan untuk setiap kategori beserta nilai dasarnya terhadap meter/gram
+        const daftarSatuan = {
+            panjang: {
+                "km": { nama: "Kilometer (km)", nilai: 1000 },
+                "m": { nama: "Meter (m)", nilai: 1 },
+                "cm": { nama: "Centimeter (cm)", nilai: 0.01 },
+                "mm": { nama: "Millimeter (mm)", nilai: 0.001 }
+            },
+            berat: {
+                "kg": { nama: "Kilogram (kg)", nilai: 1000 },
+                "g": { nama: "Gram (g)", nilai: 1 },
+                "ons": { nama: "Ons (Indo)", nilai: 100 },
+                "pon": { nama: "Pon", nilai: 500 }
+            },
+            suhu: {
+                "C": { nama: "Celsius (°C)" },
+                "F": { nama: "Fahrenheit (°F)" },
+                "K": { nama: "Kelvin (K)" }
+            }
+        };
+
+        // Fungsi otomatis mengubah isi dropdown menu sesuai kategori yang diklik
+        function updateOpsiSatuan() {
+            const kategori = document.getElementById('kategori').value;
+            const selectDari = document.getElementById('satuanDari');
+            const selectKe = document.getElementById('satuanKe');
+            
+            // Bersihkan opsi lama
+            selectDari.innerHTML = "";
+            selectKe.innerHTML = "";
+
+            // Ambil objek satuan yang relevan
+            const opsi = daftarSatuan[kategori];
+
+            for (let kunci in opsi) {
+                let elemenOpsiDari = document.createElement('option');
+                elemenOpsiDari.value = kunci;
+                elemenOpsiDari.innerText = opsi[kunci].nama;
+                selectDari.appendChild(elemenOpsiDari);
+
+                let elemenOpsiKe = document.createElement('option');
+                elemenOpsiKe.value = kunci;
+                elemenOpsiKe.innerText = opsi[kunci].nama;
+                selectKe.appendChild(elemenOpsiKe);
+            }
+            
+            // Set default pilihan tujuan berbeda agar menarik
+            if (selectKe.options.length > 1) {
+                selectKe.selectedIndex = 1;
+            }
+        }
+
+        // Jalankan fungsi pengisian dropdown saat halaman pertama kali dimuat
+        window.onload = updateOpsiSatuan;
+
+        // Logika Inti Perhitungan Matematika Konversi
+        function prosesKonversi() {
+            const kategori = document.getElementById('kategori').value;
+            const input = parseFloat(document.getElementById('nilaiInput').value);
+            const dari = document.getElementById('satuanDari').value;
+            const ke = document.getElementById('satuanKe').value;
+
+            if (isNaN(input)) {
+                alert("Silakan masukkan nilai angka yang valid!");
+                return;
+            }
+
+            let hasil = 0;
+
+            if (kategori === 'suhu') {
+                // Rumus Khusus Konversi Suhu
+                let tempInC = 0;
+                // 1. Ubah dulu semuanya ke standar Celsius
+                if (dari === 'C') tempInC = input;
+                else if (dari === 'F') tempInC = (input - 32) * 5 / 9;
+                else if (dari === 'K') tempInC = input - 273.15;
+
+                // 2. Dari Celsius ubah ke target tujuan
+                if (ke === 'C') hasil = tempInC;
+                else if (ke === 'F') hasil = (tempInC * 9 / 5) + 32;
+                else if (ke === 'K') hasil = tempInC + 273.15;
+            } else {
+                // Rumus Umum Panjang & Berat (Menggunakan rasio angka dasar)
+                const dataKategori = daftarSatuan[kategori];
+                const nilaiDasarDari = dataKategori[dari].nilai;
+                const nilaiDasarKe = dataKategori[ke].nilai;
+
+                // Ubah nilai asal ke satuan dasar (meter atau gram) lalu bagi dengan nilai target
+                hasil = (input * nilaiDasarDari) / nilaiDasarKe;
+            }
+
+            // Tampilkan hasil rincian kalimat ke layar pembaca
+            const namaDari = daftarSatuan[kategori][dari].nama.split(" (")[0];
+            const namaKe = daftarSatuan[kategori][ke].nama.split(" (")[0];
+            
+            // Sederhanakan pecahan desimal panjang maksimal 4 angka di belakang koma
+            const hasilBersih = Number(hasil.toFixed(4));
+
+            document.getElementById('teksHasil').innerText = `${input} ${namaDari} = ${hasilBersih} ${namaKe}`;
+            document.getElementById('hasilBox').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

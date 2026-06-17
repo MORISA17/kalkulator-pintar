@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Umur & Usia Akurat Online - KalkulatorPintar</title>
+    <!-- Hubungkan ke CSS Utama di luar folder -->
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Gaya Khusus untuk Komponen Form Kalkulator */
+        .calc-container {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+        .btn-calc {
+            width: 100%;
+            background: #3182ce;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn-calc:hover {
+            background: #2b6cb0;
+        }
+        /* Desain Box Hasil */
+        .result-box {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px dashed #e2e8f0;
+            display: none;
+        }
+        .age-highlight {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .result-detail {
+            font-size: 0.95rem;
+            color: #4a5568;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #edf2f7;
+        }
+        .result-detail p {
+            margin-bottom: 8px;
+        }
+        .result-detail p:last-child {
+            margin-bottom: 0;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #4a5568;
+            text-decoration: none;
+            margin-bottom: 25px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: #3182ce;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Tombol Kembali ke Beranda -->
+        <a href="../index.html" class="back-link">⬅️ Kembali ke Semua Kalkulator</a>
+
+        <div class="calc-container">
+            <header style="margin-bottom: 30px; text-align: left;">
+                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Kalkulator Umur & Usia</h1>
+                <p style="font-size: 0.95rem;">Hitung usia Anda secara mendetail dalam satuan tahun, bulan, hingga hari.</p>
+            </header>
+
+            <!-- Form Input -->
+            <div class="form-group">
+                <label for="tanggalLahir">Masukkan Tanggal Lahir Anda</label>
+                <input type="date" id="tanggalLahir" class="form-control">
+            </div>
+
+            <button onclick="hitungUmur()" class="btn-calc">Hitung Usia</button>
+
+            <!-- Tempat Menampilkan Hasil Hitung -->
+            <div id="hasilBox" class="result-box">
+                <h3 style="color: #2d3748; font-size: 1.1rem; margin-bottom: 15px;">Hasil Perhitungan:</h3>
+                
+                <div class="age-highlight" id="umurUtama">
+                    0 Tahun 0 Bulan 0 Hari
+                </div>
+
+                <div class="result-detail">
+                    <p>🕒 Total dalam Bulan: <strong id="totalBulan">0</strong> bulan</p>
+                    <p>📆 Total dalam Hari: <strong id="totalHari">0</strong> hari</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 KalkulatorPintar. Semua Hak Dilindungi.</p>
+        </footer>
+    </div>
+
+    <!-- Logika JavaScript Perhitungan Waktu -->
+    <script>
+        function hitungUmur() {
+            const birthInput = document.getElementById('tanggalLahir').value;
+            
+            if (!birthInput) {
+                alert("Silakan pilih tanggal lahir terlebih dahulu!");
+                return;
+            }
+
+            const birthDate = new Date(birthInput);
+            const today = new Date();
+
+            // Validasi jika tanggal lahir melampaui hari ini
+            if (birthDate > today) {
+                alert("Tanggal lahir tidak boleh melampaui tanggal hari ini!");
+                return;
+            }
+
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            let days = today.getDate() - birthDate.getDate();
+
+            // Koreksi jika perhitungan hari minus
+            if (days < 0) {
+                months--;
+                // Mendapatkan jumlah hari dari bulan sebelumnya
+                const previousMonth = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+                days += previousMonth;
+            }
+
+            // Koreksi jika perhitungan bulan minus
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Hitung statistik akumulatif alternatif (Bagus untuk pelengkap info SEO)
+            const diffTime = Math.abs(today - birthDate);
+            const totalDaysAcc = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const totalMonthsAcc = (years * 12) + months;
+
+            // Cetak ke HTML
+            document.getElementById('umurUtama').innerText = `${years} Tahun, ${months} Bulan, ${days} Hari`;
+            document.getElementById('totalBulan').innerText = totalMonthsAcc.toLocaleString('id-ID');
+            document.getElementById('totalHari').innerText = totalDaysAcc.toLocaleString('id-ID');
+
+            // Tampilkan kotak hasil
+            document.getElementById('hasilBox').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
