@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Kebutuhan Kalori Harian (BMR) - KalkulatorPintar</title>
+    <title>Kalkulator Gaji Bersih & Pajak PPh 21 Online - KalkulatorPintar</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="..\assets\images\favicon.png">
     <style>
@@ -38,23 +38,6 @@
             border-color: #3182ce;
             box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
         }
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            padding: 10px 0;
-        }
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            cursor: pointer;
-        }
         .btn-calc {
             width: 100%;
             background: #3182ce;
@@ -77,48 +60,42 @@
             border-top: 2px dashed #e2e8f0;
             display: none;
         }
-        .calories-highlight {
-            background: #fffaf0;
-            color: #dd6b20;
+        .salary-highlight {
+            background: #f7fafc;
+            color: #2b6cb0;
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid #feebc8;
+            border: 1px solid #e2e8f0;
             margin-bottom: 20px;
         }
-        .calories-highlight span {
+        .salary-highlight span {
             display: block;
             font-size: 0.9rem;
             color: #4a5568;
             font-weight: 500;
             margin-bottom: 5px;
         }
-        .calories-highlight strong {
+        .salary-highlight strong {
             font-size: 1.8rem;
             font-weight: 700;
         }
-        .diet-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        .diet-card {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #edf2f7;
-            text-align: center;
-        }
-        .diet-card h4 {
-            font-size: 0.9rem;
+        .result-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.95rem;
             color: #4a5568;
-            margin-bottom: 5px;
         }
-        .diet-card p {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #2d3748;
+        .result-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+        }
+        .minus-value {
+            color: #e53e3e;
         }
         .back-link {
             display: inline-flex;
@@ -140,63 +117,56 @@
 
         <div class="calc-container">
             <header style="margin-bottom: 30px; text-align: left;">
-                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Kalkulator Kalori Harian</h1>
-                <p style="font-size: 0.95rem;">Ketahui kebutuhan kalori harian Anda berdasarkan profil fisik dan aktivitas.</p>
+                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">Kalkulator Gaji Bersih</h1>
+                <p style="font-size: 0.95rem;">Simulasi hitung Take Home Pay (THP) bulanan setelah potongan iuran dan pajak.</p>
             </header>
 
             <div class="form-group">
-                <label>Jenis Kelamin</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="gender" value="pria" checked> 👨 Pria</label>
-                    <label><input type="radio" name="gender" value="wanita"> 👩 Wanita</label>
-                </div>
-            </div>
-
-            <div class="grid-3">
-                <div class="form-group">
-                    <label for="usia">Usia (Tahun)</label>
-                    <input type="number" id="usia" class="form-control" placeholder="Umoor" min="1">
-                </div>
-                <div class="form-group">
-                    <label for="berat">Berat (kg)</label>
-                    <input type="number" id="berat" class="form-control" placeholder="BB" min="1">
-                </div>
-                <div class="form-group">
-                    <label for="tinggi">Tinggi (cm)</label>
-                    <input type="number" id="tinggi" class="form-control" placeholder="TB" min="1">
-                </div>
+                <label for="gajiPokok">Gaji Pokok Bulanan (Rp)</label>
+                <input type="number" id="gajiPokok" class="form-control" placeholder="Contoh: 7000000">
             </div>
 
             <div class="form-group">
-                <label for="aktivitas">Tingkat Aktivitas Harian</label>
-                <select id="aktivitas" class="form-control">
-                    <option value="1.2">Sedentary (Jarang olahraga / Kerja kantoran duduk)</option>
-                    <option value="1.375">Ringan (Olahraga ringan 1-3 hari/minggu)</option>
-                    <option value="1.55">Sedang (Olahraga intensitas sedang 3-5 hari/minggu)</option>
-                    <option value="1.725">Berat (Olahraga berat/fisik 6-7 hari/minggu)</option>
+                <label for="tunjangan">Tunjangan & Bonus Tambahan (Rp) <span style="font-weight: normal; font-size: 0.85rem; color:#718096;">*Opsional</span></label>
+                <input type="number" id="tunjangan" class="form-control" placeholder="Contoh: 1500000" value="0">
+            </div>
+
+            <div class="form-group">
+                <label for="ptkp">Status Pernikahan / Tanggungan (PTKP)</label>
+                <select id="ptkp" class="form-control">
+                    <option value="54000000">TK/0 - Lajang (Tidak Ada Tanggungan)</option>
+                    <option value="58500000">K/0 - Menikah (Tidak Ada Tanggungan)</option>
+                    <option value="63000000">K/1 - Menikah (1 Anak/Tanggungan)</option>
+                    <option value="67500000">K/2 - Menikah (2 Anak/Tanggungan)</option>
                 </select>
             </div>
 
-            <button onclick="hitungKalori()" class="btn-calc">Hitung Kebutuhan Kalori</button>
+            <button onclick="hitungGaji()" class="btn-calc">Hitung Gaji Bersih</button>
 
             <div id="hasilBox" class="result-box">
-                <div class="calories-highlight">
-                    <span>Kebutuhan Kalori Pemeliharaan (TDEE):</span>
-                    <strong id="kaloriUtama">0 Kcal / Hari</strong>
+                <div class="salary-highlight">
+                    <span>Gaji Bersih Diterima (Take Home Pay):</span>
+                    <strong id="thpUtama" style="color: #38a169;">Rp 0</strong>
                 </div>
-
-                <h3 style="color: #2d3748; font-size: 1rem; margin-top: 10px;">Rencana Target Program Diet Anda:</h3>
                 
-                <div class="diet-options">
-                    <div class="diet-card" style="border-left: 4px solid #3182ce;">
-                        <h4>Turunkan Berat Badan</h4>
-                        <p id="loseWeight" style="color: #3182ce;">0 Kcal</p>
-                    </div>
-                    <div class="diet-card" style="border-left: 4px solid #38a169;">
-                        <h4>Naikkan Berat Badan</h4>
-                        <p id="gainWeight" style="color: #38a169;">0 Kcal</p>
-                    </div>
-                </div>
+                <table class="result-table">
+                    <tr>
+                        <td>Total Gaji Kotor (Pokok + Tunjangan)</td>
+                        <td id="resKotor" style="color: #2d3748;">Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td>Potongan BPJS Kesehatan (1%)</td>
+                        <td id="resBpjsKes" class="minus-value">-Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td>Potongan BPJS Ketenagakerjaan (JHT 2%)</td>
+                        <td id="resBpjsKet" class="minus-value">-Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td>Estimasi Pajak PPh 21 (Bulanan)</td>
+                        <td id="resPph21" class="minus-value">-Rp 0</td>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -206,39 +176,56 @@
     </div>
 
     <script>
-        function hitungKalori() {
-            const gender = document.querySelector('input[name="gender"]:checked').value;
-            const usia = parseFloat(document.getElementById('usia').value);
-            const berat = parseFloat(document.getElementById('berat').value);
-            const tinggi = parseFloat(document.getElementById('tinggi').value);
-            const multiplier = parseFloat(document.getElementById('aktivitas').value);
+        function hitungGaji() {
+            const gapok = parseFloat(document.getElementById('gajiPokok').value);
+            const tunjangan = parseFloat(document.getElementById('tunjangan').value) || 0;
+            const ptkpTahunan = parseFloat(document.getElementById('ptkp').value);
 
-            if (isNaN(usia) || isNaN(berat) || isNaN(tinggi) || usia <= 0 || berat <= 0 || tinggi <= 0) {
-                alert("Silakan isi data usia, berat, dan tinggi badan dengan angka yang valid!");
+            if (isNaN(gapok) || gapok <= 0) {
+                alert("Silakan masukkan nominal gaji pokok yang valid!");
                 return;
             }
 
-            // 1. Hitung BMR (Rumus Medis Mifflin-St Jeor)
-            let bmr = 0;
-            if (gender === 'pria') {
-                bmr = (10 * berat) + (6.25 * tinggi) - (5 * usia) + 5;
-            } else {
-                bmr = (10 * berat) + (6.25 * tinggi) - (5 * usia) - 161;
+            // 1. Hitung Gaji Kotor Bulanan & Tahunan
+            const gajiKotorSebulan = gapok + tunjangan;
+            const gajiKotorSetahun = gajiKotorSebulan * 12;
+
+            // 2. Hitung Potongan BPJS Karyawan (Sesuai aturan standar umum)
+            const bpjsKesehatan = gapok * 0.01; // 1%
+            const bpjsKetenagakerjaan = gapok * 0.02; // JHT 2%
+            const totalBpjsSebulan = bpjsKesehatan + bpjsKetenagakerjaan;
+
+            // 3. Estimasi Pajak PPh 21 Sederhana (Tarif Progresif Pasal 17)
+            // Biaya Jabatan 5% dari gaji kotor (Maksimal Rp 500.000 sebulan / Rp 6.000.000 setahun)
+            let biayaJabatan = gajiKotorSebulan * 0.05;
+            if (biayaJabatan > 500000) biayaJabatan = 500000;
+
+            const penghasilanNettoSetahun = (gajiKotorSebulan - biayaJabatan - totalBpjsSebulan) * 12;
+            const PKP = penghasilanNettoSetahun - ptkpTahunan;
+
+            let pph21Tahunan = 0;
+            if (PKP > 0) {
+                // Tarif Progresif Lapisan Pertama (0 - Rp 60 Juta kena 5%)
+                if (PKP <= 60000000) {
+                    pph21Tahunan = PKP * 0.05;
+                } else {
+                    // Lapisan Kedua jika gaji sangat besar (60jt pertama kena 5%, sisanya kena 15%)
+                    pph21Tahunan = (60000000 * 0.05) + ((PKP - 60000000) * 0.15);
+                }
             }
+            const pph21Sebulan = pph21Tahunan / 12;
 
-            // 2. Hitung TDEE (Total Kalori Berdasarkan Aktivitas)
-            const tdee = bmr * multiplier;
+            // 4. Hitung Take Home Pay (THP) Akhir
+            const thp = gajiKotorSebulan - totalBpjsSebulan - pph21Sebulan;
 
-            // 3. Hitung Target Defisit & Surplus Ringan (± 500 Kcal)
-            const deficit = tdee - 500;
-            const surplus = tdee + 500;
+            // Render output ke tabel visual
+            document.getElementById('thpUtama').innerText = "Rp " + Math.round(thp).toLocaleString('id-ID');
+            document.getElementById('resKotor').innerText = "Rp " + Math.round(gajiKotorSebulan).toLocaleString('id-ID');
+            document.getElementById('resBpjsKes').innerText = "-Rp " + Math.round(bpjsKesehatan).toLocaleString('id-ID');
+            document.getElementById('resBpjsKet').innerText = "-Rp " + Math.round(bpjsKetenagakerjaan).toLocaleString('id-ID');
+            document.getElementById('resPph21').innerText = "-Rp " + Math.round(pph21Sebulan).toLocaleString('id-ID');
 
-            // Cetak Hasil ke Layar
-            document.getElementById('kaloriUtama').innerText = Math.round(tdee).toLocaleString('id-ID') + " Kcal / Hari";
-            document.getElementById('loseWeight').innerText = Math.round(deficit).toLocaleString('id-ID') + " Kcal / Hari";
-            document.getElementById('gainWeight').innerText = Math.round(surplus).toLocaleString('id-ID') + " Kcal / Hari";
-
-            // Munculkan Box Hasil
+            // Tampilkan kotak hasil
             document.getElementById('hasilBox').style.display = 'block';
         }
     </script>
